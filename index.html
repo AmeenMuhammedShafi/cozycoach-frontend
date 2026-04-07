@@ -1366,17 +1366,25 @@ function _applyRelativeColors(map) {
 
   for (const [id, val] of entries) {
     const el = document.getElementById(id);
-    el.classList.remove('cl', 'cm', 'ch');
+    let bgColor = 'rgba(243,156,18,.11)'; // default amber background
+    let borderColor = 'rgba(243,156,18,.28)'; // default amber border
 
     if (max === min) {
-      el.classList.add('cm'); // all equal
+      bgColor = 'rgba(243,156,18,.11)';
+      borderColor = 'rgba(243,156,18,.28)';
     } else if (val === max) {
-      el.classList.add('ch'); // red
+      bgColor = 'rgba(255,107,107,.11)';
+      borderColor = 'rgba(255,107,107,.28)';
     } else if (val === min) {
-      el.classList.add('cl'); // green
+      bgColor = 'rgba(46,204,113,.11)';
+      borderColor = 'rgba(46,204,113,.28)';
     } else {
-      el.classList.add('cm'); // amber
+      bgColor = 'rgba(243,156,18,.11)';
+      borderColor = 'rgba(243,156,18,.28)';
     }
+    
+    el.style.background = bgColor;
+    el.style.borderColor = borderColor;
   }
 }
 
@@ -1595,16 +1603,19 @@ async function refreshCrowd() {
     // 🎨 Color the crowd bars based on relative values
     zones.forEach(([name, val, elId]) => {
       const el = document.getElementById(elId);
-      el.classList.remove('cl', 'cm', 'ch');
+      let bgColor = 'var(--amber)'; // default
+      
       if (max === min) {
-        el.classList.add('cm'); // all equal - amber
+        bgColor = 'var(--amber)'; // all equal - amber
       } else if (val === max) {
-        el.classList.add('ch'); // red - highest crowd
+        bgColor = 'var(--coral)'; // red - highest crowd
       } else if (val === min) {
-        el.classList.add('cl'); // green - lowest crowd
+        bgColor = 'var(--green)'; // green - lowest crowd
       } else {
-        el.classList.add('cm'); // amber - middle crowd
+        bgColor = 'var(--amber)'; // amber - middle crowd
       }
+      
+      el.style.background = bgColor;
     });
 
     // 🎯 CHIP (based on spread, not absolute)

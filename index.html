@@ -696,13 +696,13 @@ input  { font-family: inherit; }
           <svg width="9" height="9" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="var(--t3)" stroke-width="2" stroke-linecap="round"/></svg>
         </div>
         <div class="coach cl" id="c-f" onclick="pickCoach('f')">
-          <span class="coach-lbl">Front</span>
+          <span class="coach-lbl" id="c-f-lbl">Front</span>
         </div>
         <div class="coach cm" id="c-m" onclick="pickCoach('m')">
-          <span class="coach-lbl">Mid</span>
+          <span class="coach-lbl" id="c-m-lbl">Mid</span>
         </div>
         <div class="coach ch" id="c-r" onclick="pickCoach('r')">
-          <span class="coach-lbl">Rear</span>
+          <span class="coach-lbl" id="c-r-lbl">Rear</span>
         </div>
       </div>
       <!-- legend -->
@@ -745,9 +745,9 @@ input  { font-family: inherit; }
           </div>
           <!-- pct grid -->
           <div class="stat-grid" style="margin-top:14px;margin-bottom:0">
-            <div class="stat-box"><div class="sv gn" id="cu-fpct">—</div><div class="sl">Front</div></div>
-            <div class="stat-box"><div class="sv am" id="cu-mpct">—</div><div class="sl">Middle</div></div>
-            <div class="stat-box"><div class="sv co" id="cu-rpct">—</div><div class="sl">Rear</div></div>
+            <div class="stat-box"><div class="sv" id="cu-fpct" style="color:var(--green)">—</div><div class="sl">Front</div></div>
+            <div class="stat-box"><div class="sv" id="cu-mpct" style="color:var(--amber)">—</div><div class="sl">Middle</div></div>
+            <div class="stat-box"><div class="sv" id="cu-rpct" style="color:var(--coral)">—</div><div class="sl">Rear</div></div>
           </div>
           <!-- recommendation -->
           <div style="background:var(--s2);border-radius:8px;padding:12px 13px;margin-top:12px;display:flex;align-items:flex-start;gap:10px">
@@ -1364,27 +1364,46 @@ function _applyRelativeColors(map) {
   const max = Math.max(...values);
   const min = Math.min(...values);
 
+  // Also get the label elements (for preview coaches)
+  const labelMap = {
+    'c-f': 'c-f-lbl',
+    'c-m': 'c-m-lbl',
+    'c-r': 'c-r-lbl'
+  };
+
   for (const [id, val] of entries) {
     const el = document.getElementById(id);
     let bgColor = 'rgba(243,156,18,.11)'; // default amber background
     let borderColor = 'rgba(243,156,18,.28)'; // default amber border
+    let textColor = 'var(--amber)'; // default text
 
     if (max === min) {
       bgColor = 'rgba(243,156,18,.11)';
       borderColor = 'rgba(243,156,18,.28)';
+      textColor = 'var(--amber)';
     } else if (val === max) {
       bgColor = 'rgba(255,107,107,.11)';
       borderColor = 'rgba(255,107,107,.28)';
+      textColor = 'var(--coral)';
     } else if (val === min) {
       bgColor = 'rgba(46,204,113,.11)';
       borderColor = 'rgba(46,204,113,.28)';
+      textColor = 'var(--green)';
     } else {
       bgColor = 'rgba(243,156,18,.11)';
       borderColor = 'rgba(243,156,18,.28)';
+      textColor = 'var(--amber)';
     }
     
     el.style.background = bgColor;
     el.style.borderColor = borderColor;
+    
+    // Update label color if it exists
+    const labelId = labelMap[id];
+    if (labelId) {
+      const labelEl = document.getElementById(labelId);
+      if (labelEl) labelEl.style.color = textColor;
+    }
   }
 }
 
@@ -1588,9 +1607,9 @@ async function refreshCrowd() {
 
     // 🔥 RELATIVE LOGIC
     const zones = [
-      ['Front', c.f, 'cu-f'],
-      ['Mid', c.m, 'cu-m'],
-      ['Rear', c.r, 'cu-r']
+      ['Front', c.f, 'cu-f', 'cu-fpct'],
+      ['Mid', c.m, 'cu-m', 'cu-mpct'],
+      ['Rear', c.r, 'cu-r', 'cu-rpct']
     ];
 
     const values = zones.map(z => z[1]);
@@ -1600,22 +1619,29 @@ async function refreshCrowd() {
     const bestZones = zones.filter(z => z[1] === min);
     const worstZones = zones.filter(z => z[1] === max);
 
-    // 🎨 Color the crowd bars based on relative values
-    zones.forEach(([name, val, elId]) => {
-      const el = document.getElementById(elId);
+    // 🎨 Color the crowd bars AND numbers based on relative values
+    zones.forEach(([name, val, barId, numId]) => {
+      const barEl = document.getElementById(barId);
+      const numEl = document.getElementById(numId);
       let bgColor = 'var(--amber)'; // default
+      let numColor = 'var(--amber)'; // default
       
       if (max === min) {
         bgColor = 'var(--amber)'; // all equal - amber
+        numColor = 'var(--amber)';
       } else if (val === max) {
         bgColor = 'var(--coral)'; // red - highest crowd
+        numColor = 'var(--coral)';
       } else if (val === min) {
         bgColor = 'var(--green)'; // green - lowest crowd
+        numColor = 'var(--green)';
       } else {
         bgColor = 'var(--amber)'; // amber - middle crowd
+        numColor = 'var(--amber)';
       }
       
-      el.style.background = bgColor;
+      barEl.style.background = bgColor;
+      numEl.style.color = numColor;
     });
 
     // 🎯 CHIP (based on spread, not absolute)

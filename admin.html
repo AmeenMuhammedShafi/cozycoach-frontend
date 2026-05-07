@@ -277,11 +277,7 @@
   </div>
 
   <script>
-    const API = (() => {
-      const url = new URL(window.location);
-      url.port = '5000';
-      return url.origin + '/api';
-    })();
+    const API = 'https://cozycoach3.onrender.com/api';
 
     // AUTHENTICATION
     const CORRECT_PASSWORD = "admin123";  // Change this to your password

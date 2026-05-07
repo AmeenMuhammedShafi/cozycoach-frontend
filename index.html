@@ -897,7 +897,12 @@ input  { font-family: inherit; }
 /* ════════════════════════════════════════════
    CONFIG — change this to your deployed URL
 ════════════════════════════════════════════ */
-const API = window.__API__ || 'https://cozycoach3.onrender.com/api';
+const API = window.__API__ || (() => {
+  // Use the same domain/IP as the frontend, just change port to 5000
+  const url = new URL(window.location);
+  url.port = '5000';
+  return url.origin + '/api';
+})();
 const FRONTEND_URL = window.__FRONTEND_URL__ || window.location.origin;
 
 /* ════════════════════════════════════════════

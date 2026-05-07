@@ -1,0 +1,16 @@
+{
+  "name": "cozycoach-frontend",
+  "version": "1.0.0",
+  "description": "CozyCoach - Train crowd tracking app",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 5173 -c-1",
+    "build": "echo 'No build needed for static site'"
+  },
+  "keywords": ["train", "crowd", "tracking"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
